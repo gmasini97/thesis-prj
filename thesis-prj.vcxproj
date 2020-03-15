@@ -19,6 +19,7 @@
     <ClInclude Include="CsvFileWriter.h" />
     <ClInclude Include="CUDAConvolver.cuh" />
     <ClInclude Include="CUDADFT.cuh" />
+    <ClInclude Include="CUDAFFT.cuh" />
     <ClInclude Include="CUDASignalProcessor.cuh" />
     <ClInclude Include="DFT.h" />
     <ClInclude Include="FFT.h" />
@@ -52,6 +53,7 @@
     <CudaCompile Include="CmplxUtils.cu" />
     <CudaCompile Include="CUDAConvolver.cu" />
     <CudaCompile Include="CUDADFT.cu" />
+    <CudaCompile Include="CUDAFFT.cu" />
     <CudaCompile Include="CUDASignalProcessor.cu" />
     <CudaCompile Include="main.cu" />
   </ItemGroup>

@@ -97,11 +97,12 @@ void fft_wsio(SignalBuffer_t &bufferIn, SignalBuffer_t &bufferOut, size_t size_i
 				cuComplex a = get_sample(bufferOut, index_a);
 				cuComplex b = get_sample(bufferOut, index_b);
 				butterfly_calculation(&a, &b, w);
-				set_sample(bufferOut, index_a, a);
-				set_sample(bufferOut, index_b, b);
+				set_nr_sample(bufferOut, index_a, a);
+				set_nr_sample(bufferOut, index_b, b);
 			}
 			w = cuCmulf(w, wm);
 		}
+		set_buffer_size(bufferOut, get_buffer_size(bufferIn));
 	}
 }
 
@@ -115,7 +116,8 @@ void FFTProcessor::process_buffer(SignalBuffer_t &buffer)
 	if (has_previous_processor())
 		get_previous_processor()->process_buffer(buffer);
 	size_t size = get_buffer_size(buffer);
+	recreate_signal_buffer(buffer, points, 1);
 	if (size > 0) {
-		fft(buffer);
+		fft_wsio(buffer, buffer, points);
 	}
 }

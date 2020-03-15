@@ -10,6 +10,7 @@
 #include "DFT.h"
 #include "CUDADFT.cuh"
 #include "CUDAConvolver.cuh"
+#include "CUDAFFT.cuh"
 #include "Averager.h"
 #include "FFT.h"
 #include "IFTT.h"

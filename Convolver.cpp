@@ -52,7 +52,7 @@ void Convolver::process_buffer(SignalBuffer_t &buffer)
 		return;
 	}
 
-
+	
 	for (size_t i = 0; i < buffer_size; i++)
 	{
 		cuComplex in_sample = get_sample(buffer, i);

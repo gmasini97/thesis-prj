@@ -59,7 +59,7 @@ __host__ __device__ static inline int set_buffer_size(SignalBuffer_t &buf, size_
 // sets the sample at a position, does nothing if index is out of bounds
 __host__ __device__ static inline int set_nr_sample(SignalBuffer_t buf, size_t index, cuComplex v)
 {
-	if (index >= buf.size)
+	if (index >= buf.max_size)
 		return 0;
 	buf.samples[index] = v;
 	return 1;
@@ -69,11 +69,9 @@ __host__ __device__ static inline int set_nr_sample(SignalBuffer_t buf, size_t i
 // sets the sample at a position, tries to resize if index is out of bounds
 __host__ __device__ static inline int set_sample(SignalBuffer_t &buf, size_t index, cuComplex v)
 {
-	if (set_nr_sample(buf, index, v))
-		return 1;
-	if (set_buffer_size(buf, index+1)) {
-		set_nr_sample(buf, index, v);
-		return 1;
-	}
-	return 0;
+	if (!set_nr_sample(buf, index, v))
+		return 0;
+	if (index > buf.size)
+		set_buffer_size(buf, index+1);
+	return 1;
 }

@@ -158,6 +158,14 @@ AbstractSignalProcessor* create_from_line(string line, AbstractSignalProcessor* 
 		return new CUDADFT(previous, size);
 	}
 	else
+	if (name == "cudafft")
+	{
+		int size;
+		if (!chain_loader_read_int(ss, size))
+			return NULL;
+		return new CUDAFFT(previous, size);
+	}
+	else
 	if (name == "cudaconv")
 	{
 		int size;
