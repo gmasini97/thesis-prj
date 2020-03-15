@@ -9,26 +9,17 @@ __device__ void cuda_butterfly_calculation(cuComplex* a, cuComplex* b, cuComplex
 	*b = cuCsubf(aa, bw);
 }
 
-__device__ unsigned int reverse_bits(unsigned int num, size_t bits)
+__device__ __host__ size_t reverse_bits(size_t x, size_t bits)
 {
-	unsigned int mask = 0;
-	for (size_t i = 0; i < bits; i++) {
-		mask = mask | (1 << i);
-	}
-	num = num & mask;
-	unsigned int count = bits - 1;
-	unsigned int reverse_num = num;
-
-	num >>= 1;
-	while (num)
+	size_t rev = 0;
+	while (x && bits)
 	{
-		reverse_num <<= 1;
-		reverse_num |= num & 1;
-		num >>= 1;
-		count--;
+		rev = (rev << 1) | (x & 1);
+		x = x >> 1;
+		bits --;
 	}
-	reverse_num <<= count;
-	return reverse_num;
+	rev = rev << bits;
+	return rev;
 }
 
 __global__ void cudafft_kernel_br_sort(SignalBuffer_t device_buffer, SignalBuffer_t tmp, size_t bits)
@@ -41,9 +32,7 @@ __global__ void cudafft_kernel_br_sort(SignalBuffer_t device_buffer, SignalBuffe
 
 	cuComplex cmplx1 = get_sample(device_buffer, k);
 	cuComplex cmplx2 = get_sample(device_buffer, rev);
-	cmplx1.x = k;
 	set_nr_sample(tmp, rev, cmplx1);
-	cmplx2.x = rev;
 	set_nr_sample(tmp, k, cmplx2);
 }
 
@@ -55,7 +44,7 @@ __global__ void cudafft_kernel_butterflies(SignalBuffer_t in_buf, SignalBuffer_t
 	int index_b = index_a + bpd;
 	cuComplex a = get_sample(in_buf, index_a);
 	cuComplex b = get_sample(out_buf, index_b);
-	cuComplex w = cuComplex_exp(-(2*PI*index_a)/level);
+	cuComplex w = cuComplex_exp(-(2*PI*index_a)/(bpd*2));
 	cuda_butterfly_calculation(&a, &b, w);
 	set_nr_sample(out_buf, index_a, a);
 	set_nr_sample(out_buf, index_b, b);
@@ -115,10 +104,10 @@ void CUDAFFT::exec_kernel(SignalBuffer_t& host_buffer, SignalBuffer_t& device_bu
 
 	wait_for_gpu();
 
-	/*for (size_t i = 0; i < levels; i++) {
+	for (size_t i = 0; i < levels; i++) {
 		cudafft_kernel_butterflies<< <blocks, threadsPerBlock >> > (tmp, tmp, i);
 		wait_for_gpu();
-	}*/
+	}
 	get_threads_blocks_count(points, threadsPerBlock, blocks);
 
 	set_buffer_size(device_buffer, points);

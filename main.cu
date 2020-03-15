@@ -14,6 +14,7 @@ int main(int argc, const char** argv)
 	AbstractSignalProcessor* chain = build_fx_chain(argv[2], fileLoader);
 
 	SignalBuffer_t buffer = create_signal_buffer(buffer_size);
+
 	try
 	{
 		chain->init(buffer_size);

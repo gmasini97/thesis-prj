@@ -18,7 +18,8 @@ SignalBuffer_t create_signal_buffer(size_t max_size)
 {
 	SignalBuffer_t buffer;
 	buffer.max_size = max_size;
-	buffer.samples = new cuComplex[max_size];
+	if (cudaMallocHost((void**)&(buffer.samples), sizeof(cuComplex) * max_size) != cudaSuccess)
+		throw std::runtime_error("cuda malloc host fail");
 	buffer.size = 0;
 	return buffer;
 }
@@ -41,8 +42,10 @@ void copy_signal_buffer(SignalBuffer_t& dest, SignalBuffer_t src)
 
 void delete_signal_buffer(SignalBuffer_t &buffer)
 {
-	if (buffer.samples != NULL)
-		delete[] buffer.samples;
+	if (buffer.samples != NULL) {
+		if (cudaFreeHost(buffer.samples) != cudaSuccess)
+			throw std::runtime_error("cuda free host fail");
+	}
 	buffer.size = 0;
 	buffer.max_size = 0;
 }

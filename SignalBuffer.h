@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <cuComplex.h>
 #include "BitMaskUtils.h"
+#include <stdexcept>
 
 struct SignalBuffer_t
 {

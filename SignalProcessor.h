@@ -3,7 +3,6 @@
 #include "SignalBuffer.h"
 #include "BitMaskUtils.h"
 #include "LogUtils.h"
-#include <stdexcept>
 
 #define PI 3.141592654f
 #define M_PI 3.141592654f

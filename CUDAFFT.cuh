@@ -10,6 +10,8 @@
 
 #include "LogUtils.h"
 
+__device__ __host__ size_t reverse_bits(size_t x, size_t bits);
+
 class CUDAFFT : public CUDASignalProcessor
 {
 private:
